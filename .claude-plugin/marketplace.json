@@ -1,0 +1,16 @@
+{
+  "name": "claude-mods",
+  "owner": {
+    "name": "Nigel Ramsay"
+  },
+  "metadata": {
+    "description": "Small mods for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "usage-bar",
+      "source": "./plugins/usage-bar",
+      "description": "A small coloured bar in the desktop prompt footer showing how much of your 5-hour session limit is used"
+    }
+  ]
+}

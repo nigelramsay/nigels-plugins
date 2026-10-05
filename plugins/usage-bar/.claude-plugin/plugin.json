@@ -1,0 +1,7 @@
+{
+  "name": "usage-bar",
+  "version": "0.1.0",
+  "description": "A small coloured bar in the desktop prompt footer showing how much of your 5-hour session limit is used",
+  "author": { "name": "Nigel Ramsay" },
+  "types": "./types/index.d.ts"
+}
