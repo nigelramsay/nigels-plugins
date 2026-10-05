@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-10-05
 
 - All sessions on the machine share one reading: each picks up the latest within 30 seconds, whichever session heard from the API.
 - The bar drops when its 5-hour window resets, even while the session sits idle.
