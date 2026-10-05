@@ -1,12 +1,12 @@
-# nigels-mods
+# nigels-plugins
 
-Small mods for Claude Code.
+Plugins for Claude Code.
 
 ## Install
 
 ```
-/plugin marketplace add nigelramsay/claude-mods
-/plugin install usage-bar@nigels-mods
+/plugin marketplace add nigelramsay/nigels-plugins
+/plugin install usage-bar@nigelramsay
 ```
 
 ## usage-bar

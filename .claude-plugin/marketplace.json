@@ -1,10 +1,10 @@
 {
-  "name": "nigels-mods",
+  "name": "nigelramsay",
   "owner": {
     "name": "Nigel Ramsay"
   },
   "metadata": {
-    "description": "Small mods for Claude Code"
+    "description": "Plugins for Claude Code"
   },
   "plugins": [
     {
