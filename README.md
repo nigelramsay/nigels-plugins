@@ -1,4 +1,4 @@
-# claude-mods
+# nigels-mods
 
 Small mods for Claude Code.
 
@@ -6,7 +6,7 @@ Small mods for Claude Code.
 
 ```
 /plugin marketplace add nigelramsay/claude-mods
-/plugin install usage-bar@claude-mods
+/plugin install usage-bar@nigels-mods
 ```
 
 ## usage-bar
