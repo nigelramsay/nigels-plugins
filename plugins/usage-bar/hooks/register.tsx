@@ -5,7 +5,7 @@ import type { Limit } from '../types'
 const limits = { plugin: 'usage-bar', key: 'limits' } as const
 
 const CELLS = 6
-const TRACK = '#d4d4d4' // ponytail: eyeballed donut grey from a screenshot
+const TRACK = 'inactive' // theme key, so the track follows light/dark mode
 const color = (p: number) => (p > 90 ? '#d93b3b' : p > 60 ? '#e8862a' : '#2978d5')
 
 const pick = ({ kind, percentUsed, resetsAt }: Limit): Limit => ({ kind, percentUsed, resetsAt })
