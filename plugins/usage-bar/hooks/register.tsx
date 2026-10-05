@@ -1,4 +1,4 @@
-import type { Register } from 'claude-code'
+import type { EngineInterface, Register } from 'claude-code'
 
 import type { Limit } from '../types'
 
@@ -10,15 +10,28 @@ const color = (p: number) => (p > 90 ? '#d93b3b' : p > 60 ? '#e8862a' : '#2978d5
 
 const pick = ({ kind, percentUsed, resetsAt }: Limit): Limit => ({ kind, percentUsed, resetsAt })
 
+const save = async ($: EngineInterface, l: Limit[]) => {
+  const v = l.map(pick)
+  await $.state.set(limits, v)
+  await $.store.set('limits', v)
+}
+
 export const register: Register = on => {
+  // Rate limits only arrive with an API response, so until the first one the
+  // bar shows the last reading saved across sessions, minus windows since reset.
   on('session.start', async ($, e, next) => {
-    const l = (await $.session.usage()).rateLimits
-    await $.state.set(limits, l.map(pick))
+    const live = (await $.session.usage()).rateLimits
+    if (live.length) await save($, live)
+    else {
+      const now = await $.clock.now()
+      const saved = ((await $.store.get('limits')) ?? []) as Limit[]
+      await $.state.set(limits, saved.filter(l => l.resetsAt && Date.parse(l.resetsAt) > now))
+    }
     return next(e)
   })
 
   on('session.measure', async ($, e, next) => {
-    if (e.changed.includes('rateLimits')) await $.state.set(limits, e.rateLimits.map(pick))
+    if (e.changed.includes('rateLimits')) await save($, e.rateLimits)
     return next(e)
   })
 
