@@ -18,3 +18,4 @@ your 5-hour session limit is used. Blue up to 60%, orange above 60%, red above 9
 - Needs a subscription with session limits.
 - Built against Claude Code 2.1.286's mod API.
 - Bar length: `CELLS` in `plugins/usage-bar/hooks/register.tsx`.
+- [Changelog](plugins/usage-bar/CHANGELOG.md)

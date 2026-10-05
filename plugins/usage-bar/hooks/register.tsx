@@ -1,4 +1,4 @@
-import type { EngineInterface, Register } from 'claude-code'
+import type { EngineInterface, Register, Timer } from 'claude-code'
 
 import type { Limit } from '../types'
 
@@ -8,25 +8,42 @@ const CELLS = 6
 const TRACK = 'inactive' // theme key, so the track follows light/dark mode
 const color = (p: number) => (p > 90 ? '#d93b3b' : p > 60 ? '#e8862a' : '#2978d5')
 
-const pick = ({ kind, percentUsed, resetsAt }: Limit): Limit => ({ kind, percentUsed, resetsAt })
+const POLL_MS = 30_000 // how soon a reading another session saved shows here
+
+let expiry: Timer | undefined
+
+// Shows the windows that haven't reset, and drops each one as its reset passes,
+// since no new reading arrives while the session sits idle.
+const show = async ($: EngineInterface, l: Limit[]) => {
+  const now = await $.clock.now()
+  const open = l.filter(x => !x.resetsAt || Date.parse(x.resetsAt) > now)
+  await $.state.set(limits, open)
+  expiry?.cancel()
+  const resets = open.flatMap(x => (x.resetsAt ? [Date.parse(x.resetsAt)] : []))
+  if (resets.length) expiry = $.clock.after(Math.min(...resets) - now, () => show($, open))
+}
 
 const save = async ($: EngineInterface, l: Limit[]) => {
-  const v = l.map(pick)
-  await $.state.set(limits, v)
-  await $.store.set('limits', v)
+  await show($, l)
+  // An empty reading would wipe the one the next session starts with.
+  if (l.length) await $.store.set('limits', l)
+}
+
+// Every session on this machine shares the store, so this picks up the reading
+// whichever session heard from the API last.
+const load = async ($: EngineInterface) => {
+  const saved = await $.store.get('limits')
+  if (Array.isArray(saved) && saved.length) await show($, saved)
 }
 
 export const register: Register = on => {
   // Rate limits only arrive with an API response, so until the first one the
-  // bar shows the last reading saved across sessions, minus windows since reset.
+  // bar shows the last reading any session saved, minus windows since reset.
   on('session.start', async ($, e, next) => {
     const live = (await $.session.usage()).rateLimits
     if (live.length) await save($, live)
-    else {
-      const now = await $.clock.now()
-      const saved = ((await $.store.get('limits')) ?? []) as Limit[]
-      await $.state.set(limits, saved.filter(l => l.resetsAt && Date.parse(l.resetsAt) > now))
-    }
+    else await load($)
+    $.clock.every(POLL_MS, () => load($))
     return next(e)
   })
 
@@ -48,7 +65,7 @@ export const register: Register = on => {
 
     return (
       <Text>
-        {modes}
+        <Text dimColor>{modes}</Text>
         <Text color={color(pct)}>{'━'.repeat(filled)}</Text>
         <Text color={TRACK}>{'━'.repeat(CELLS - filled)}</Text>
         {` ${Math.round(session.percentUsed)}%`}
