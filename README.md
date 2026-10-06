@@ -4,12 +4,17 @@ Plugins for Claude Code.
 
 ## Install
 
-```
-/plugin marketplace add nigelramsay/nigels-plugins
-/plugin install usage-bar@nigelramsay
-```
+To add this repo to your marketplace list:
+
+1. Open Claude Code
+2. Open Settings
+3. Click Plugins
+4. Choose Add > Add Marketplace
+5. Paste in: `nigelramsay/nigels-plugins`
 
 ## usage-bar
+
+<img width="873" height="156" alt="usage-bar" src="https://github.com/user-attachments/assets/11bdc90e-0d73-4455-8f21-c91a5ccc2837" />
 
 Draws `━━━━━━ 33%` in the desktop app's prompt footer, left of the model name: how much of
 your 5-hour session limit is used. Blue up to 60%, orange above 60%, red above 90%.
